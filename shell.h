@@ -34,15 +34,15 @@ void shell::command_render(std::string command)
     int index = find_command_index(command);
     switch (index)
     {
-    case 0:
-        help();
-        break;
-    case 1:
-        kernel_version();
-        break;
-    default:
-        std::cout << "Unknown command" << std::endl;
-        break;
+        case 0:
+            help();
+            break;
+        case 1:
+            kernel_version();
+            break;
+        default:
+            std::cout << "Unknown command" << std::endl;
+            break;
     }
     command_input();
 }
