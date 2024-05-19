@@ -3,4 +3,5 @@ project(duokernel)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(duokernel main.cpp)
+add_executable(duokernel shell.h
+        main.cpp)
