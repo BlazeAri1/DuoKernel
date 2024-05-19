@@ -57,11 +57,12 @@ void shell::command_input()
     else
     {
         std::cout << "Unknown command" << std::endl;
-        command_render("help");
+        command_input();
     }
 }
 void shell::help()
 {
+    std::cout << "List of commands\n";
     for (int i = 0; i < command_list.size(); i++)
     {
         std::cout << command_list[i] << std::endl;
