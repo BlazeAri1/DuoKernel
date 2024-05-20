@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "ping.h"
 
 class shell
 {
@@ -40,24 +41,25 @@ void shell::command_render(std::string command)
         case 1:
             kernel_version();
             break;
-        default:
-            std::cout << "Unknown command" << std::endl;
-            break;
     }
-    command_input();
 }
 void shell::command_input()
 {
-    std::cout << ">>> ";
-    std::cin >> current_command;
-    if (find_command_index(current_command) != -1)
+    while (true)
     {
-        command_render(current_command);
-    }
-    else
-    {
-        std::cout << "Unknown command" << std::endl;
-        command_input();
+        std::cout << ">>> ";
+        std::cin >> current_command;
+        if (find_command_index(current_command) != -1)
+        {
+            command_render(current_command);
+        }
+        else if (current_command == "exit") {
+            break;
+        }
+        else
+        {
+            std::cout << "Unknown command" << std::endl;
+        }
     }
 }
 void shell::help()
@@ -78,7 +80,7 @@ std::vector<std::string> shell::parse_command(std::string command)
     std::string part = "";
     command = command + " "; // если последний символ - не пробел, последнего push_back не произойдет.
 
-    for (char ch : command)
+    for(char ch : command)
     {
         if (ch == ' ') // пропуск всех пробелов
         {
