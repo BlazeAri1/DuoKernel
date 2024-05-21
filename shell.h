@@ -170,16 +170,14 @@ void shell::sideload()
     sideload_command_list[command_name] = run_command;
 }
 
-void shell::exit_user() 
-{
+void shell::exit_user() {
     username = "";
     password = "";
     shell_start = "";
     log_in();
 }
 
-void shell::log_in() 
-{
+void shell::log_in() {
     shell::register_user(); // с выходом FS нужно заменить
 }
 
@@ -201,3 +199,4 @@ std::vector<std::string> shell::parse_command(std::string command)
     }
     return result;
 }
+
