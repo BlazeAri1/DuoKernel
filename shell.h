@@ -3,84 +3,86 @@
 #include <vector>
 #include <map>
 
-class shell {
+class shell
+{
 private:
+    bool core_work = true;
     std::string version = "0.1";
     std::string current_command;
-    std::vector<std::string> command_list = {"help", "ver", "sideload"};
+    std::vector<std::string> command_list = {"exit", "help", "ver", "sideload"};
     std::map<std::string, std::string> sideload_command_list;
 
 public:
     std::vector<std::string> parse_command(std::string command);
-
     void command_input();
-
-    void command_render(const std::string &command);
-
-    int find_command_index(const std::string &command);
-
+    void command_render(std::string command);
+    int find_command_index(std::string command);
     void kernel_version();
-
     void help();
-
     void sideload();
 };
-
-int shell::find_command_index(const std::string &command)
+int shell::find_command_index(std::string command)
 {
-    for (int i = 0; i < command_list.size(); i++) {
-        if (command == command_list[i]) {
+    for (int i = 0; i < command_list.size(); i++)
+    {
+        if (command == command_list[i])
+        {
             return i;
         }
     }
     return -1;
 }
-
-void shell::command_render(const std::string &command)
+void shell::command_render(std::string command)
 {
     auto vector = parse_command(command);
     int index = find_command_index(command);
-    switch (index) {
+    switch (index)
+    {
         case 0:
-            help();
+            core_work = false;
             break;
         case 1:
-            kernel_version();
+            help();
             break;
         case 2:
+            kernel_version();
+            break;
+        case 3:
             sideload();
             break;
-        default:
-            std::cout << "Unknown command" << std::endl;
-            break;
     }
-    command_input();
 }
-
 void shell::command_input()
 {
-    std::cout << ">>> ";
-    std::cin >> current_command;
-    if (find_command_index(current_command) != -1) {
-        command_render(current_command);
-    } else {
-        if (sideload_command_list.find(current_command) == sideload_command_list.end()) {
-            std::cout << "Unknown command" << std::endl;
-        } else {
-            system(sideload_command_list[current_command].c_str());
+    while (core_work)
+    {
+        std::cout << ">>> ";
+        std::cin >> current_command;
+        if (find_command_index(current_command) != -1)
+        {
+            command_render(current_command);
         }
-        command_input();
+        else
+        {
+            if (sideload_command_list.find(current_command) == sideload_command_list.end())
+            {
+            std::cout << "Unknown command" << std::endl;
+            } 
+            else 
+            {
+            system(sideload_command_list[current_command].c_str());
+            }
+        }
     }
 }
-
 void shell::help()
 {
     std::cout << "List of commands\n";
-    for (int i = 0; i < command_list.size(); i++) {
+    for (int i = 0; i < command_list.size(); i++)
+    {
         std::cout << command_list[i] << std::endl;
     }
 }
-
 void shell::kernel_version()
 {
     std::cout << "DuoKernel version: " << version << std::endl;
@@ -155,7 +157,8 @@ std::vector<std::string> shell::parse_command(std::string command)
     std::string part = "";
     command = command + " "; // если последний символ - не пробел, последнего push_back не произойдет.
 
-    for (char ch: command) {
+    for(char ch : command)
+    {
         if (ch == ' ') // пропуск всех пробелов
         {
             result.push_back(part);
