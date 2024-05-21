@@ -5,9 +5,10 @@
 class shell
 {
 private:
+    bool core_work = true;
     std::string version = "0.1";
     std::string current_command;
-    std::vector<std::string> command_list = {"help", "ver"};
+    std::vector<std::string> command_list = {"exit", "help", "ver"};
 
 public:
     std::vector<std::string> parse_command(std::string command);
@@ -35,9 +36,12 @@ void shell::command_render(std::string command)
     switch (index)
     {
         case 0:
-            help();
+            core_work = false;
             break;
         case 1:
+            help();
+            break;
+        case 2:
             kernel_version();
             break;
     }
@@ -51,9 +55,6 @@ void shell::command_input()
         if (find_command_index(current_command) != -1)
         {
             command_render(current_command);
-        }
-        else if (current_command == "exit") {
-            break;
         }
         else
         {
