@@ -48,7 +48,7 @@ void shell::command_render(std::string command)
 }
 void shell::command_input()
 {
-    while (true)
+    while (core_work)
     {
         std::cout << ">>> ";
         std::cin >> current_command;
