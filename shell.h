@@ -10,7 +10,9 @@ private:
     std::string version = "0.1";
     std::string current_command;
     std::string shell_start;
-    std::vector<std::string> command_list = {"exit", "help", "ver", "sideload"};
+    std::string username;
+    std::string password;
+    std::vector<std::string> command_list = {"exit", "help", "ver", "sideload", "exit_user"};
     std::map<std::string, std::string> sideload_command_list;
 
 public:
@@ -22,6 +24,8 @@ public:
     void kernel_version();
     void help();
     void sideload();
+    void exit_user();
+    void log_in();
 };
 int shell::find_command_index(std::string command)
 {
@@ -52,6 +56,9 @@ void shell::command_render(std::string command)
         case 3:
             sideload();
             break;
+        case 4:
+            exit_user();
+            break;
     }
 }
 void shell::command_input()
@@ -80,13 +87,11 @@ void shell::command_input()
 
 void shell::register_user()
 {
-    std::string name;
-    std::string password;
     std::cout << "Enter username:\n> ";
-    std::cin >> name;
+    std::cin >> username;
     std::cout << "Enter password:\n> ";
     std::cin >> password;
-    shell_start = "[" + name + "] > ";
+    shell_start = "[" + username + "] > ";
 }
 
 void shell::help()
@@ -163,6 +168,19 @@ void shell::sideload()
     }
 
     sideload_command_list[command_name] = run_command;
+}
+
+void shell::exit_user() 
+{
+    username = "";
+    password = "";
+    shell_start = "";
+    log_in();
+}
+
+void shell::log_in() 
+{
+    shell::register_user(); // с выходом FS нужно заменить
 }
 
 std::vector<std::string> shell::parse_command(std::string command)
