@@ -9,6 +9,7 @@ private:
     bool core_work = true;
     std::string version = "0.1";
     std::string current_command;
+    std::string shell_start;
     std::vector<std::string> command_list = {"exit", "help", "ver", "sideload"};
     std::map<std::string, std::string> sideload_command_list;
 
@@ -17,6 +18,7 @@ public:
     void command_input();
     void command_render(std::string command);
     int find_command_index(std::string command);
+    void register_user();
     void kernel_version();
     void help();
     void sideload();
@@ -56,7 +58,7 @@ void shell::command_input()
 {
     while (core_work)
     {
-        std::cout << ">>> ";
+        std::cout << shell_start;
         std::cin >> current_command;
         if (find_command_index(current_command) != -1)
         {
@@ -75,6 +77,18 @@ void shell::command_input()
         }
     }
 }
+
+void shell::register_user()
+{
+    std::string name;
+    std::string password;
+    std::cout << "Enter username:\n> ";
+    std::cin >> name;
+    std::cout << "Enter password:\n> ";
+    std::cin >> password;
+    shell_start = "[" + name + "] > ";
+}
+
 void shell::help()
 {
     std::cout << "List of commands\n";
