@@ -8,9 +8,11 @@ class shell
 {
 private:
     bool core_work = true;
+    user_system kernel;
     std::string version = "0.1";
     std::string current_command;
-    std::vector<std::string> command_list = {"exit", "help", "ver", "sideload","add_user","delete_user","rename_user"};
+    std::string current_user;
+    std::vector<std::string> command_list = {"exit", "help", "ver", "sideload", "add_user", "delete_user", "rename_user"};
     std::map<std::string, std::string> sideload_command_list;
 
 public:
@@ -22,6 +24,9 @@ public:
     void help();
     void sideload();
     void add_user_dialog();
+    void user_login();
+    void user_system_create();
+    void delete_user_dialog();
 };
 int shell::find_command_index(std::string command)
 {
@@ -52,6 +57,10 @@ void shell::command_render(std::string command)
     case 3:
         sideload();
         break;
+    case 4:
+        add_user_dialog();
+    case 5:
+        delete_user_dialog();
     }
 }
 void shell::command_input()
@@ -77,6 +86,21 @@ void shell::command_input()
         }
     }
 }
+void shell::user_system_create()
+{
+    std::string user_name;
+    std::string password;
+    user first_user;
+    std::cout << "Welcome to the DuoKernel! Please write name of your new user and password" << std::endl;
+    std::cout << "Write name of user\n>>> ";
+    std::cin >> user_name;
+    std::cout << "Write password\n>>> ";
+    std::cin >> password;
+    first_user.set_name(user_name);
+    first_user.set_password(password);
+    kernel.add_user(first_user);
+    std::cout << "User is created. Please,login" << std::endl;
+}
 void shell::help()
 {
     std::cout << "List of commands\n";
@@ -85,7 +109,51 @@ void shell::help()
         std::cout << command_list[i] << std::endl;
     }
 }
-
+void shell::user_login()
+{
+    std::string user_name;
+    std::string password;
+    if (!kernel.is_empty())
+    {
+        std::cout << "Write name of user\n>>> ";
+        std::cin >> user_name;
+        std::cout << "Write password\n>>> ";
+        std::cin >> password;
+        if (kernel.login_user(user_name, password))
+        {
+            current_user = user_name;
+            command_input();
+        }
+        else
+        {
+            std::cout << "Wrong name or password" << std::endl;
+        }
+    }
+    else
+    {
+        user_system_create();
+    }
+}
+void shell::add_user_dialog()
+{
+    std::string user_name;
+    std::string password;
+    user new_user;
+    std::cout << "Write name of user\n>>> ";
+    std::cin >> user_name;
+    std::cout << "Write password\n>>> ";
+    std::cin >> password;
+    if (new_user.set_name(user_name))
+    {
+        new_user.set_password(password);
+        kernel.add_user(new_user);
+        std::cout << "User is created" << std::endl;
+    }
+    else
+    {
+        std::cout << "This user has already created." << std::endl;
+    }
+}
 void shell::kernel_version()
 {
     std::cout << "DuoKernel version: " << version << std::endl;
