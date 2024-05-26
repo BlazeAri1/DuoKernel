@@ -1,35 +1,48 @@
 #include <string>
 #include <vector>
+#include "permission.h"
 std::vector<std::string> user_names;
 class user
 {
 private:
-    std::vector<std::string> user_permissions;
-    std::vector<std::string>::iterator find_iter(std::string string, std::vector<std::string> vector);
+    std::vector<permission> user_permissions;
+    std::vector<permission>::iterator find_iter(permission perm, std::vector<permission> vector);
     bool check_name(std::string name);
+    bool is_root(user user1);
 
 public:
     std::string user_name;
     std::string user_password;
-    void add_permission(std::string permission);
-    void erase_permission(std::string permission);
+    void add_permission(permission permission);
+    void erase_permission(permission permission);
     bool set_name(std::string name);
     void set_password(std::string password);
 };
-std::vector<std::string>::iterator user::find_iter(std::string string, std::vector<std::string> vector)
+bool user::is_root(user user1)
+{
+    for (int i = 0; i < user_permissions.size(); i++)
+    {
+        if (user_permissions[i] == root)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+std::vector<permission>::iterator user::find_iter(permission perm, std::vector<permission> vector)
 {
     auto iter = vector.begin();
-    while (*(iter) != string)
+    while (*(iter) != perm)
     {
         iter += 1;
     }
     return iter;
 }
-void user::add_permission(std::string permission)
+void user::add_permission(permission permission)
 {
     user_permissions.push_back(permission);
 }
-void user::erase_permission(std::string permission)
+void user::erase_permission(permission permission)
 {
     user_permissions.erase(find_iter(permission, user_permissions));
 }

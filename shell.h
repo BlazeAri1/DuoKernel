@@ -12,21 +12,23 @@ private:
     std::string version = "0.1";
     std::string current_command;
     std::string current_user;
-    std::vector<std::string> command_list = {"exit", "help", "ver", "sideload", "add_user", "delete_user", "rename_user"};
+    std::vector<std::string> command_list = {"off", "help", "ver", "sideload", "add_user", "delete_user", "rename_user", "exit"};
     std::map<std::string, std::string> sideload_command_list;
 
 public:
     std::vector<std::string> parse_command(std::string command);
     void command_input();
-    void command_render(std::string command);
+    void exit();
+    void command_render(std::string command, std::string command_without_arguments);
     int find_command_index(std::string command);
     void kernel_version();
     void help();
     void sideload();
-    void add_user_dialog();
+    void add_user_dialog(std::string user_name, std::string password);
+    void delete_user_dialog(std::string user_name);
+    void rename_user(std::string user_name, std::string new_name);
     void user_login();
     void user_system_create();
-    void delete_user_dialog();
 };
 int shell::find_command_index(std::string command)
 {
@@ -39,10 +41,10 @@ int shell::find_command_index(std::string command)
     }
     return -1;
 }
-void shell::command_render(std::string command)
+void shell::command_render(std::string command, std::string command_without_arguments)
 {
     auto vector = parse_command(command);
-    int index = find_command_index(command);
+    int index = find_command_index(command_without_arguments);
     switch (index)
     {
     case 0:
@@ -58,26 +60,27 @@ void shell::command_render(std::string command)
         sideload();
         break;
     case 4:
-        add_user_dialog();
+        add_user_dialog(vector[1], vector[2]);
     case 5:
-        delete_user_dialog();
     }
 }
 void shell::command_input()
 {
     while (core_work)
     {
-        std::cout << ">>> ";
+        std::cout << current_user << " >>> ";
         std::cin >> current_command;
-        if (find_command_index(current_command) != -1)
+        std::string command_without_arguments = current_command;
+        getline(std::cin, current_command);
+        if (find_command_index(command_without_arguments) != -1 && current_command != "")
         {
-            command_render(current_command);
+            command_render(current_command, command_without_arguments);
         }
         else
         {
             if (sideload_command_list.find(current_command) == sideload_command_list.end())
             {
-                std::cout << "Unknown command" << std::endl;
+                std::cout << "Unknown command or wrong arguments" << std::endl;
             }
             else
             {
@@ -98,6 +101,7 @@ void shell::user_system_create()
     std::cin >> password;
     first_user.set_name(user_name);
     first_user.set_password(password);
+    first_user.add_permission(root);
     kernel.add_user(first_user);
     std::cout << "User is created. Please,login" << std::endl;
 }
@@ -134,18 +138,13 @@ void shell::user_login()
         user_system_create();
     }
 }
-void shell::add_user_dialog()
+void shell::add_user_dialog(std::string user_name, std::string password)
 {
-    std::string user_name;
-    std::string password;
     user new_user;
-    std::cout << "Write name of user\n>>> ";
-    std::cin >> user_name;
-    std::cout << "Write password\n>>> ";
-    std::cin >> password;
     if (new_user.set_name(user_name))
     {
         new_user.set_password(password);
+        new_user.add_permission(basic);
         kernel.add_user(new_user);
         std::cout << "User is created" << std::endl;
     }
@@ -158,14 +157,17 @@ void shell::kernel_version()
 {
     std::cout << "DuoKernel version: " << version << std::endl;
 }
-
+void shell::exit()
+{
+    current_user = "";
+    user_login();
+}
 void shell::sideload()
 {
     std::string run_command = "";
     std::string command_name;
     std::string folder;
     std::string filename;
-
     int selection;
     std::cout << "Enter type of app to sideload:\n"
                  "1. Python script\n"
@@ -230,13 +232,11 @@ void shell::sideload()
 
     sideload_command_list[command_name] = run_command;
 }
-
 std::vector<std::string> shell::parse_command(std::string command)
 {
     std::vector<std::string> result;
     std::string part = "";
     command = command + " "; // если последний символ - не пробел, последнего push_back не произойдет.
-
     for (char ch : command)
     {
         if (ch == ' ') // пропуск всех пробелов
