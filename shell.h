@@ -63,10 +63,13 @@ void shell::command_render(std::string command, std::string command_without_argu
         break;
     case 4:
         add_user_dialog(vector[1], vector[2]);
+        break;
     case 5:
         exit();
+        break;
     case 6:
         delete_user_dialog(vector[1]);
+        break;
     }
 }
 void shell::command_input()
