@@ -12,15 +12,16 @@ private:
     std::string version = "0.1";
     std::string current_command;
     std::string current_user;
-    std::vector<std::string> command_list = {"off", "help", "ver", "sideload", "add_user", "delete_user", "rename_user", "exit"};
+    std::vector<std::string> command_list = {"off", "help", "ver", "sideload", "add_user", "exit", "delete_user", "rename_user"};
+    std::vector<std::string> commands_with_arguments = {"add_user", "delete_user", "rename_user"};
     std::map<std::string, std::string> sideload_command_list;
+    int find_command_index(std::string command, std::vector<std::string> vector);
 
 public:
     std::vector<std::string> parse_command(std::string command);
     void command_input();
     void exit();
     void command_render(std::string command, std::string command_without_arguments);
-    int find_command_index(std::string command);
     void kernel_version();
     void help();
     void sideload();
@@ -30,11 +31,11 @@ public:
     void user_login();
     void user_system_create();
 };
-int shell::find_command_index(std::string command)
+int shell::find_command_index(std::string command, std::vector<std::string> vector)
 {
     for (int i = 0; i < command_list.size(); i++)
     {
-        if (command == command_list[i])
+        if (command == vector[i])
         {
             return i;
         }
@@ -44,7 +45,7 @@ int shell::find_command_index(std::string command)
 void shell::command_render(std::string command, std::string command_without_arguments)
 {
     auto vector = parse_command(command);
-    int index = find_command_index(command_without_arguments);
+    int index = find_command_index(command_without_arguments, command_list);
     switch (index)
     {
     case 0:
@@ -62,6 +63,9 @@ void shell::command_render(std::string command, std::string command_without_argu
     case 4:
         add_user_dialog(vector[1], vector[2]);
     case 5:
+        exit();
+    case 6:
+        delete_user_dialog(vector[1]);
     }
 }
 void shell::command_input()
@@ -72,7 +76,11 @@ void shell::command_input()
         std::cin >> current_command;
         std::string command_without_arguments = current_command;
         getline(std::cin, current_command);
-        if (find_command_index(command_without_arguments) != -1 && current_command != "")
+        if (find_command_index(command_without_arguments, command_list) != -1 && find_command_index(current_command, commands_with_arguments) != -1)
+        {
+            command_render(current_command, command_without_arguments);
+        }
+        else if (find_command_index(command_without_arguments, command_list) != -1 && find_command_index(current_command, commands_with_arguments) == -1)
         {
             command_render(current_command, command_without_arguments);
         }
@@ -151,6 +159,26 @@ void shell::add_user_dialog(std::string user_name, std::string password)
     else
     {
         std::cout << "This user has already created." << std::endl;
+    }
+}
+void shell::delete_user_dialog(std::string delete_user)
+{
+    if (delete_user != current_user)
+    {
+        kernel.delete_user(delete_user);
+    }
+    else
+    {
+        std::cout << "You can't delete your user." << std::endl;
+    }
+    auto iter = user_names.begin();
+    for (int i = 0; i < user_names.size(); i++)
+    {
+        if (*(iter) == delete_user)
+        {
+            user_names.erase(iter);
+        }
+        iter++;
     }
 }
 void shell::kernel_version()
