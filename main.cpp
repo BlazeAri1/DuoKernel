@@ -1,7 +1,8 @@
 #include "shell.h"
-int main() {
-  shell shell;
-  shell.register_user();
-  shell.command_input();
-  return 0;
+int main()
+{
+    shell core;
+    core.user_system_create();
+    core.user_login();
+    return 0;
 }
