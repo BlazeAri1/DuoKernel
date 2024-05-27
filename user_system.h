@@ -20,11 +20,8 @@ void user_system::user_rename(std::string user_name, std::string new_name)
         if (user.user_name == user_name)
         {
             user.set_name(new_name);
+            std::cout << "User is renamed" << std::endl;
         }
-    }
-    if (user.user_name != user_name)
-    {
-        std::cout << "User is not exists" << std::endl;
     }
 }
 bool user_system::is_empty()

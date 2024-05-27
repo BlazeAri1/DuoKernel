@@ -72,6 +72,7 @@ void shell::command_render(std::string command, std::string command_without_argu
         break;
     case 7:
         rename_user(vector[1], vector[2]);
+        break;
     }
 }
 void shell::command_input()
@@ -121,8 +122,8 @@ void shell::user_system_create()
 }
 void shell::rename_user(std::string user_name, std::string new_name)
 {
-    kernel.user_rename(user_name,new_name);
-    std::cout << "User is renamed" << std::endl;
+    kernel.user_rename(user_name, new_name);
+    current_user = new_name;
 }
 void shell::help()
 {
