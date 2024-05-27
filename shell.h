@@ -13,7 +13,7 @@ private:
     std::string version = "0.1";
     std::string current_command;
     std::string current_user;
-    std::vector<std::string> command_list = {"off", "help", "ver", "sideload", "add_user", "exit", "delete_user","rename_user"};
+    std::vector<std::string> command_list = {"off", "help", "ver", "sideload", "add_user", "exit", "delete_user", "rename_user"};
     std::vector<std::string> commands_with_arguments = {"add_user", "delete_user", "rename_user"};
     std::map<std::string, std::string> sideload_command_list;
     int find_command_index(std::string command, std::vector<std::string> vector);
@@ -70,6 +70,8 @@ void shell::command_render(std::string command, std::string command_without_argu
     case 6:
         delete_user_dialog(vector[1]);
         break;
+    case 7:
+        rename_user(vector[1], vector[2]);
     }
 }
 void shell::command_input()
@@ -116,6 +118,11 @@ void shell::user_system_create()
     first_user.add_permission(root);
     kernel.add_user(first_user);
     std::cout << "User is created. Please,login" << std::endl;
+}
+void shell::rename_user(std::string user_name, std::string new_name)
+{
+    kernel.user_rename(user_name,new_name);
+    std::cout << "User is renamed" << std::endl;
 }
 void shell::help()
 {
@@ -170,6 +177,7 @@ void shell::delete_user_dialog(std::string delete_user)
     if (delete_user != current_user)
     {
         kernel.delete_user(delete_user);
+        std::cout << "User is deleted" << std::endl;
     }
     else
     {

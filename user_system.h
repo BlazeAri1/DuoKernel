@@ -7,9 +7,26 @@ private:
 public:
     void add_user(user user1);
     void delete_user(std::string delete_user);
+    void user_rename(std::string user_name, std::string new_name);
     bool login_user(std::string user_name, std::string user_password);
     bool is_empty();
 };
+void user_system::user_rename(std::string user_name, std::string new_name)
+{
+    auto iter = user_list.begin();
+    auto user = *(iter);
+    for (int i = 0; i < user_list.size(); i++)
+    {
+        if (user.user_name == user_name)
+        {
+            user.set_name(new_name);
+        }
+    }
+    if (user.user_name != user_name)
+    {
+        std::cout << "User is not exists" << std::endl;
+    }
+}
 bool user_system::is_empty()
 {
     if (user_list.size() == 0)
