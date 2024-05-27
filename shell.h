@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "user_system.h"
+#include <stdlib.h>
 
 class shell
 {
@@ -12,7 +13,7 @@ private:
     std::string version = "0.1";
     std::string current_command;
     std::string current_user;
-    std::vector<std::string> command_list = {"off", "help", "ver", "sideload", "add_user", "exit", "delete_user", "rename_user"};
+    std::vector<std::string> command_list = {"off", "help", "ver", "sideload", "add_user", "exit", "delete_user","rename_user"};
     std::vector<std::string> commands_with_arguments = {"add_user", "delete_user", "rename_user"};
     std::map<std::string, std::string> sideload_command_list;
     int find_command_index(std::string command, std::vector<std::string> vector);
